@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using WebScraper.Bolsar;
+using WebScraper.Bolsar.Models;
 
 namespace TestConsole
 {
@@ -10,8 +12,14 @@ namespace TestConsole
         static void Main(string[] args)
         {
             BolsarScraper scraper = new BolsarScraper();
-            var x = scraper.GetSpecieTable("AGRO");
-            Console.WriteLine(x.Fecha);
+            var lista = new List<JsonDataResult>();
+
+            var x = scraper.GetAcciones();
+
+            foreach(var y in x)
+            {
+                lista.Add(scraper.GetSpecieData(y.Simbolo));                
+            }
             Console.ReadKey();
         }
     }

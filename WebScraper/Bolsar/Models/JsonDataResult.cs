@@ -47,10 +47,10 @@ namespace WebScraper.Bolsar.Models
         public int MensajeNro { get; set; }
         public string TablaNombre { get; set; }
         public int UltimaActualizacionListaEspecies { get; set; }
-        List<Operacion> aTabla { get; set; } = new List<Operacion>();
+        public List<Operacion> aTabla { get; set; }
     }
     [Serializable]
-    public class HistoricoTable
+    public class ResumenAccion
     {
         public int CantidadNominalCompra { get; set; }
         public int CantidadNominalVenta { get; set; }
@@ -85,15 +85,8 @@ namespace WebScraper.Bolsar.Models
 
     public class JsonDataResult
     {
-        public BolsarTable TablaDiaria { get; set; }
+        public BolsarTable MovDiarios { get; set; }
         public DateTime Fecha { get; set; }
-        public HistoricoTable TablaHistorico { get; set; }
-    }
-    [Serializable]
-    public class Data
-    {
-        public object[] d { get; set; } = { new BolsarTable(), new DateTime(), new HistoricoTable() };
-
-
+        public ResumenAccion Resumen { get; set; }
     }
 }
