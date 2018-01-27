@@ -12,14 +12,21 @@ namespace TestConsole
         static void Main(string[] args)
         {
             BolsarScraper scraper = new BolsarScraper();
-            var lista = new List<JsonDataResult>();
+            var lista = new List<DataPack>();
 
-            var x = scraper.GetAcciones();
+            var x = scraper.GetAllAcciones();
 
-            foreach(var y in x)
+            foreach (var y in x)
             {
-                lista.Add(scraper.GetSpecieData(y.Simbolo));                
+                lista.Add(scraper.GetAccion(y.Simbolo));
             }
+            Console.ReadKey();
+
+            foreach (var t in lista)
+            {
+                Console.WriteLine(t.MovDiarios.Operaciones.Find(r => r.AgenteCompradorID == 0).Simbolo);
+            }
+
             Console.ReadKey();
         }
     }

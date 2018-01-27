@@ -1,13 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 using WebScraper.Bolsar.Models;
 
 namespace WebScraper.Bolsar
@@ -19,18 +16,11 @@ namespace WebScraper.Bolsar
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             string address = "https://www.bolsar.com/VistasDL/PaginaIntradiarioEspecies.aspx/GetDataPack";
-            var msg = new ReqPayload(sName);
-            var serializer = new DataContractJsonSerializer(typeof(ReqPayload));
-            MemoryStream stream = new MemoryStream();
-            serializer.WriteObject(stream, msg);
-            var reader = new StreamReader(stream);
-            stream.Position = 0;
-            var payload = reader.ReadToEnd();
+            var payload = @"{""objEstadoIntradiarioEspecie"":{""FiltroEspecie"":""" + sName + @""",""FiltroVto"":""3"",""MensajeNro"":0}}";
             HttpResponseMessage wcfResponse = await client.PostAsync(address, new StringContent(payload, Encoding.UTF8, "application/json"));
             string x = await wcfResponse.Content.ReadAsStringAsync();
             return x;
         }
-
         private async Task<string> ReadAcciones()
         {
             HttpClient client = new HttpClient();
@@ -41,25 +31,22 @@ namespace WebScraper.Bolsar
             string x = await wcfResponse.Content.ReadAsStringAsync();
             return x;
         }
-        public List<ResumenAccion> GetAcciones()
+        public List<ResumenAccion> GetAllAcciones()
         {
-
             string result = ReadAcciones().GetAwaiter().GetResult();
             JObject json = JObject.Parse(result);
-            var jsonData = new JsonDataResult();
+            var jsonData = new DataPack();
             var x = json["d"][0]["aTabla"].ToObject<List<ResumenAccion>>();
             return x;
         }
-        public JsonDataResult GetSpecieData(string sName)
+        public DataPack GetAccion(string sName)
         {
-
             string result = ReadSpecie(sName).GetAwaiter().GetResult();
             JObject json = JObject.Parse(result);
-            var jsonData = new JsonDataResult();
-            jsonData.MovDiarios = json["d"][0].ToObject<BolsarTable>();
+            var jsonData = new DataPack();
+            jsonData.MovDiarios = json["d"][0].ToObject<TablaIntradiario>();
             jsonData.Fecha = json["d"][1].ToObject<DateTime>();
             jsonData.Resumen = json["d"][2].ToObject<ResumenAccion>();
-
             return jsonData;
         }
     }
